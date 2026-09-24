@@ -24,15 +24,45 @@ CODON_TABLE = {
 
 
 def read_fasta(path):
-    """Return [(name, description, sequence), ...].
+    """Return [(name, description, sequence), ...]."""
+    records = []
+    name, description, sequence = None, "", []
+    
+    #Read the file line by line and strip each line
+    
+    with open(path) as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+                
+    # When a line starts with >, a new record begins. Save the record you were building, if there is one, 
+    then start a new one.
+            
+            if line.startwith(">"):
+                if name is not None:
+                    records.append((name, description, "".join(chunks)))
+                parts = line[1:].split(None, 1)
+                name = parts[0]
+                description = parts[1] if len(parts) > 1 else ""
+                chunks = []
+            else:
+                chunks.append(line.upper())
 
-    Rules that trip people up:
+    # the last record never sees another '>', so it is banked here
+    if name is not None:
+        records.append((name, description, "".join(chunks)))
+
+    return records
+                
+                
+    """Rules that trip people up:
       * the header line is '>name rest of the description'
       * sequence lines wrap; join them
       * uppercase the sequence, strip whitespace
       * a record with no description gets ''
     """
-    raise NotImplementedError("TODO")
+    #raise NotImplementedError("TODO")
 
 
 def gc_content(seq):
