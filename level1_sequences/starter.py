@@ -89,7 +89,15 @@ def translate(seq, stop_at_stop=False):
     '*' marks a stop codon. Trailing 1-2 leftover bases are ignored.
     If stop_at_stop, cut the protein at the first '*' (the '*' is dropped).
     """
-    raise NotImplementedError("TODO")
+    seq = seq.upper()
+    aas = []
+    for i in range(0, len(seq) - len(seq) % 3, 3):
+        aa = CODON_TABLE.get(seq[i:i + 3], "X")
+        if aa == "*" and stop_at_stop:
+            break
+        aas.append(aa)
+    return "".join(aas)
+    #raise NotImplementedError("TODO")
 
 
 def find_orfs(seq, min_aa=30):
@@ -105,7 +113,29 @@ def find_orfs(seq, min_aa=30):
     Keep only ORFs whose protein is at least min_aa long (excluding the stop).
     Sort by descending protein length.
     """
-    raise NotImplementedError("TODO")
+    orfs = []
+    for strand, s in (("+", seq.upper()), ("-", reverse_complement(seq))):
+        for frame in range(3):
+            i = frame
+            while i + 3 <= len(s):
+                if s[i:i + 3] == "ATG":
+                    j = i
+                    while j + 3 <= len(s):
+                        if CODON_TABLE.get(s[j:j + 3], "X") == "*":
+                            protein = translate(s[i:j])
+                            if len(protein) >= min_aa:
+                                orfs.append({"strand": strand, "frame": frame,
+                                             "start": i, "end": j + 3,
+                                             "protein": protein})
+                            i = j
+                            break
+                        j += 3
+                    else:
+                        break
+                i += 3
+    orfs.sort(key=lambda o: -len(o["protein"]))
+    return orfs
+    #raise NotImplementedError("TODO")
 
 
 def sliding_gc(seq, window=50, step=10):
@@ -113,4 +143,8 @@ def sliding_gc(seq, window=50, step=10):
 
     The last partial window is dropped. If seq is shorter than window,
     return an empty list."""
-    raise NotImplementedError("TODO")
+    out = []
+    for start in range(0, len(seq) - window + 1, step):
+        out.append((start + window // 2, gc_content(seq[start:start + window])))
+    return out
+    #raise NotImplementedError("TODO")
