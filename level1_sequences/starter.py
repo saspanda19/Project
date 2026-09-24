@@ -36,8 +36,7 @@ def read_fasta(path):
             if not line:
                 continue
                 
-    # When a line starts with >, a new record begins. Save the record you were building, if there is one, 
-    then start a new one.
+    # When a line starts with >, a new record begins. Save the record you were building, if there is one, then start a new one.
             
             if line.startwith(">"):
                 if name is not None:
