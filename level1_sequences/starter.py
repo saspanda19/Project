@@ -40,17 +40,17 @@ def read_fasta(path):
             
             if line.startswith(">"):
                 if name is not None:
-                    records.append((name, description, "".join(chunks)))
+                    records.append((name, description, "".join(sequence)))
                 parts = line[1:].split(None, 1)
                 name = parts[0]
                 description = parts[1] if len(parts) > 1 else ""
-                chunks = []
+                sequence = []
             else:
-                chunks.append(line.upper())
+                sequence.append(line.upper())
 
     # the last record never sees another '>', so it is banked here
     if name is not None:
-        records.append((name, description, "".join(chunks)))
+        records.append((name, description, "".join(sequence)))
 
     return records
                 
