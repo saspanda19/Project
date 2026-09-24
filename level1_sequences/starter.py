@@ -69,12 +69,18 @@ def gc_content(seq):
 
     An empty sequence returns 0.0 (decide, document, and test edge cases --
     this is the habit that separates working code from demo code)."""
-    raise NotImplementedError("TODO")
+    if not seq:
+        return 0.0
+    seq = seq.upper()
+    return (seq.count("G") + seq.count("C")) / len(seq)
+    #raise NotImplementedError("TODO")
 
 
 def reverse_complement(seq):
     """Reverse complement of a DNA string. A<->T, C<->G, N->N."""
-    raise NotImplementedError("TODO")
+    complement = {"A": "T", "T": "A", "C": "G", "G": "C", "N": "N"}
+    return "".join(complement.get(base, "N") for base in seq.upper()[::-1])
+    #raise NotImplementedError("TODO")
 
 
 def translate(seq, stop_at_stop=False):
