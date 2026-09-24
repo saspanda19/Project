@@ -38,7 +38,7 @@ def read_fasta(path):
                 
     # When a line starts with >, a new record begins. Save the record you were building, if there is one, then start a new one.
             
-            if line.startwith(">"):
+            if line.startswith(">"):
                 if name is not None:
                     records.append((name, description, "".join(chunks)))
                 parts = line[1:].split(None, 1)
